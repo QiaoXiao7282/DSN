@@ -1,4 +1,4 @@
-# Sparse Network for Time Series Classification: Learning What to “See”
+# Dynamic Sparse Network for Time Series Classification: Learning What to “See”
 
 
 This is the offical implementation for the paper titled Dynamic Sparse Network for Time Series Classification: Learning What to “See”.
