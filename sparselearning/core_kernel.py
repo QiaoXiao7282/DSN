@@ -187,13 +187,10 @@ class Masking(object):
         total_size = 0
         for name, weight in self.masks.items():
             total_size  += weight.numel()
-        print('Total Model parameters:', total_size)
 
         sparse_size = 0
         for name, weight in self.masks.items():
             sparse_size += (weight != 0).sum().int().item()
-
-        print('Total parameters under sparsity level of {0}: {1}'.format(self.density, sparse_size / total_size))
 
 
     def step(self):

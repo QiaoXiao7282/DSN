@@ -5,6 +5,11 @@ from utils.utils import to_categorical
 import torch.utils.data as data
 import torch
 
+def set_nan_to_zero(a):
+    where_are_NaNs = np.isnan(a)
+    a[where_are_NaNs] = 0
+    return a
+
 def load_UCR_data(root, file_name='', normalize_timeseries=2, verbose=True):
 
     train_name = '_'.join([file_name, 'TRAIN'])
@@ -167,6 +172,69 @@ def load_dataset_mul(dataset_path, dataset_name, normalize_timeseries=False, ver
 
     return X_train, y_train, X_test, y_test, nb_classes
 
+def TSC_data_loader_128(dataset_path, dataset_name, normalize_timeseries=2):
+    Train_dataset = np.loadtxt(
+        dataset_path + '/' + dataset_name + '/' + dataset_name + '_TRAIN.tsv')
+    Test_dataset = np.loadtxt(
+        dataset_path + '/' + dataset_name + '/' + dataset_name + '_TEST.tsv')
+
+    X_train = Train_dataset[:, 1:].astype(np.float32)
+    y_train = Train_dataset[:, 0:1]
+
+    X_test = Test_dataset[:, 1:].astype(np.float32)
+    y_test = Test_dataset[:, 0:1]
+
+    X_train = set_nan_to_zero(X_train)
+    X_test = set_nan_to_zero(X_test)
+
+    is_timeseries = True
+
+    if is_timeseries:
+        X_train = X_train[:, np.newaxis, :]
+        # scale the values
+        if normalize_timeseries:
+            normalize_timeseries = int(normalize_timeseries)
+
+            if normalize_timeseries == 2:
+                X_train_mean = X_train.mean()
+                X_train_std = X_train.std()
+                X_train = (X_train - X_train_mean) / (X_train_std + 1e-8)
+
+            else:
+                X_train_mean = X_train.mean(axis=-1, keepdims=True)
+                X_train_std = X_train.std(axis=-1, keepdims=True)
+                X_train = (X_train - X_train_mean) / (X_train_std + 1e-8)
+
+    if is_timeseries:
+        X_test = X_test[:, np.newaxis, :]
+        # scale the values
+        if normalize_timeseries:
+            normalize_timeseries = int(normalize_timeseries)
+
+            if normalize_timeseries == 2:
+                X_test = (X_test - X_train_mean) / (X_train_std + 1e-8)
+            else:
+                X_test_mean = X_test.mean(axis=-1, keepdims=True)
+                X_test_std = X_test.std(axis=-1, keepdims=True)
+                X_test = (X_test - X_test_mean) / (X_test_std + 1e-8)
+
+
+    # X_train = X_train[:, np.newaxis, :]
+    # X_test = X_test[:, np.newaxis, :]
+
+    nb_classes = len(np.unique(y_test))
+    y_train = (y_train - y_train.min()) / (y_train.max() - y_train.min()) * (nb_classes - 1)
+    y_test = (y_test - y_test.min()) / (y_test.max() - y_test.min()) * (nb_classes - 1)
+    y_train = np.squeeze(y_train)
+    y_test = np.squeeze(y_test)
+
+    print("Finished loading test dataset..")
+    print()
+    print("Number of train samples : ", X_train.shape[0], "Number of test samples : ", X_test.shape[0])
+    print("Number of classes : ", nb_classes)
+    print("Sequence length : ", X_train.shape[-1])
+
+    return set_nan_to_zero(X_train), y_train, set_nan_to_zero(X_test), y_test, nb_classes
 
 
 class Data(data.Dataset):

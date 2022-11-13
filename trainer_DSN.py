@@ -7,7 +7,7 @@ from utils.dataset_timeseries import load_UCR_data, get_timeseries_dataset, load
 from utils.TSC_data_loader import TSC_multivariate_data_loader
 import argparse
 import sparselearning
-from sparselearning.core_kernel import Masking, CosineDecay
+from sparselearning.core_kernel import Masking, CosineDecay, str2bool
 import torch.nn.functional as F
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
@@ -30,7 +30,6 @@ def train(args, model, train_loader, optimizer, epoch, mask=None, weights=None):
 
         optimizer.zero_grad()
         outputs = model(im)
-        # loss = F.nll_loss(outputs, label.long(), weight=class_weight)
         loss = F.nll_loss(outputs, label.long())
         loss.backward()
 
@@ -38,7 +37,6 @@ def train(args, model, train_loader, optimizer, epoch, mask=None, weights=None):
         else: optimizer.step()
 
         train_loss += loss.item()
-
         pred = outputs.argmax(dim=1, keepdim=True)
         correct += pred.eq(label.view_as(pred)).sum().item()
         n += label.shape[0]
@@ -104,7 +102,7 @@ def main(args=None):
     class_weight = recip_freq[le.transform(classes)]
     print('Class weights: ', class_weight)
 
-    model = SCNN(c_in=X_train.shape[1], c_out=nb_classes, nf=args.ch_size, depth=args.depth, kernel=args.k_size)
+    model = SCNN(c_in=X_train.shape[1], c_out=nb_classes, nf=args.ch_size, depth=args.depth, kernel=args.k_size, pad_zero=args.pad_zero)
     model.cuda()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
@@ -128,7 +126,7 @@ def main(args=None):
             mask.death_decay_update(decay_flag=False)
         if train_loss >= output:
             print('Saving model')
-            save_path = './data/DSN_sort_%s_%s_%s_%s.pth'% (args.data, args.density,args.c_size, random_str)
+            save_path = '/data/xiaoq/sparse_seg/models_save_app/DSN_sort_%s_%s_%s_%s.pth'% (args.data, args.density, args.c_size, random_str)
             train_loss = output
             torch.save(model.state_dict(), save_path)
 
@@ -159,9 +157,9 @@ if __name__ == '__main__':
                         help='how many batches to wait before logging training status')
     parser.add_argument('--optimizer', type=str, default='sgd',
                         help='The optimizer to use. Default: sgd. Options: sgd, adam.')
-    parser.add_argument('--root', type=str, default='./data/MultiVariate',
+    parser.add_argument('--root', type=str, default='/data/xiaoq/sparse_seg/data/MultiVariate',
                         help='path to save the final model')  ## MultiVariate, UCR_TS_Archive_2015, UEA_TS_Archive
-    parser.add_argument('--data', type=str, default='eeg2')  ### OSULeaf, yoga, 50words, ElectricDevices, NonInvasiveFatalECG_Thorax1, FordA / eeg2, HAR, gesture_phase, AREM, HT_Sensor, MovementAAL, daily_sport, eeg, occupancy_detect, ozone
+    parser.add_argument('--data', type=str, default='eeg2')
     parser.add_argument('--num_classes', type=int, default=2)
     parser.add_argument('--decay_frequency', type=int, default=25000)
     parser.add_argument('--l1', type=float, default=0.0)
@@ -174,9 +172,11 @@ if __name__ == '__main__':
                         help='Resumes a saved model and saves its feature data to disk for plotting.')
     parser.add_argument('--max-threads', type=int, default=0, help='How many threads to use for data loading.')
 
-    parser.add_argument('--depth', type=int, default=4, help='number of hidden units per layer (default: 4)')
+    parser.add_argument('--depth', type=int, default=4, help='number of depth (default: 4)')
     parser.add_argument('--ch_size', type=int, default=47, help='channel size (default: 47)')
     parser.add_argument('--k_size', type=int, default=39, help='kernel size (default: 39)')
+    parser.add_argument('--pad_zero', type=str2bool, default=False, help='padding method (default: False)') ##set True for UCR2018
+
 
     # ITOP settings
     sparselearning.core_kernel.add_sparse_args(parser)

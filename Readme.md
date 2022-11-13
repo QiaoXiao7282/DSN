@@ -1,18 +1,22 @@
-# DSN Official Pytorch implementation
+# Sparse Network for Time Series Classification: Learning What to “See”
 
 
-This is code for the paper titled Dynamic Sparse Network for Time Series Classification: Learning What to “See”
+This is the offical implementation for the paper titled Dynamic Sparse Network for Time Series Classification: Learning What to “See”.
 
 ## Requirements
+- PyTorch 1.4.0
+- torchvision 0.2.1
+- numpy
+- pandas
 
-The library requires Python 3.6.7, PyTorch v1.4.0, and CUDA v9.0
-You can download it via anaconda or pip, see [PyTorch/get-started](https://pytorch.org/get-started/locally/) for further information. 
 
 ## Dataset
 
-[UCR and UEA](http://www.timeseriesclassification.com/) archives and some private datasets. 
+- The univariate time series datasets (UCR) could be acquired from [here](http://www.cs.ucr.edu/%7Eeamonn/time_series_data/)
 
-[UCI](https://github.com/titu1994/MLSTM-FCN/releases) datasets
+- The multivariate time series datasets (UEA) could be acquired from [here](http://www.timeseriesclassification.com/)
+
+- Datasets from UCI could be found [here](https://github.com/titu1994/MLSTM-FCN/releases)
 
 ## Training
 
@@ -35,9 +39,22 @@ python trainer_DSN.py --sparse True --density 0.1 --sparse_init remain_sort --fi
 
 ```
 
-#### With the default hyperpermeter setting! no need to search!
+## Other Implementations
+The implementation is heavily based on [ITOP](https://github.com/Shiweiliuiiiiiii/In-Time-Over-Parameterization)
 
-Just have a try!!!
+## Citation
+
+```
+@inproceedings{
+xiao2022dynamic,
+title={Dynamic Sparse Network for Time Series Classification: Learning What to {\textquotedblleft}See{\textquotedblright}},
+author={Qiao Xiao and Boqian Wu and Yu Zhang and Shiwei Liu and Mykola Pechenizkiy and Elena Mocanu and Decebal Constantin Mocanu},
+booktitle={Advances in Neural Information Processing Systems},
+year={2022},
+url={https://openreview.net/forum?id=ZxOO5jfqSYw}
+}
+```
+
 
   
 ​        

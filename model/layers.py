@@ -51,7 +51,7 @@ class SameConv1d(nn.Module):
         self.pad = Pad1d
 
     def forward(self, x):
-        self.padding = same_padding1d(x.shape[-1], self.ks, dilation=self.dilation) #stride=self.stride not used in padding calculation!
+        self.padding = same_padding1d(x.shape[-1], self.ks, dilation=self.dilation)
         return self.conv1d_same(self.pad(self.padding)(x))
 
 
@@ -69,13 +69,15 @@ def Conv1d(ni, nf, kernel_size=None, ks=None, stride=1, padding='same', dilation
     return conv
 
 class Conv1d_new_padding(nn.Module):
-    def __init__(self, ni, nf, ks=None, stride=1, bias=False):
+    def __init__(self, ni, nf, ks=None, stride=1, bias=False, pad_zero=True):
         super(Conv1d_new_padding, self).__init__()
 
         self.ks = ks
         # self.padding = nn.ConstantPad1d((0, int(self.ks-1)), 0)
-        self.padding = nn.ReplicationPad1d((0, int(self.ks-1)))
-        # self.padding = nn.ConstantPad1d((int((self.ks - 1) / 2), int(self.ks / 2)), 0)
+        if pad_zero:
+            self.padding = nn.ConstantPad1d((int((self.ks - 1) / 2), int(self.ks / 2)), 0)
+        else:
+            self.padding = nn.ReplicationPad1d((0, int(self.ks-1)))
         self.conv1d = nn.Conv1d(ni, nf, self.ks, stride=stride, bias=bias)
 
     def forward(self, x):
