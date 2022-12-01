@@ -39,7 +39,7 @@ python trainer_DSN.py --sparse True --density 0.1 --sparse_init remain_sort --fi
 
 ```
 
-## Other Implementations
+## Acknowledgements
 We appreciate the following github repos a lot for their valuable code
 * https://github.com/Shiweiliuiiiiiii/In-Time-Over-Parameterization
 * https://github.com/TimDettmers/sparse_learning
