@@ -11,10 +11,12 @@ This is the offical implementation for the paper titled Dynamic Sparse Network f
 
 
 ## Dataset
+We truly appreciate everyone who worked on making the datasets available and their contributions to the TSC community.
 
-- The univariate time series datasets (UCR) could be acquired from [here](http://www.cs.ucr.edu/%7Eeamonn/time_series_data/)
 
-- The multivariate time series datasets (UEA) could be acquired from [here](http://www.timeseriesclassification.com/)
+- The univariate time series datasets (UCR 85 Archive) could be found [here](http://www.cs.ucr.edu/%7Eeamonn/time_series_data/)
+
+- The multivariate time series datasets (UEA 30 Archive) could be found [here](http://www.timeseriesclassification.com/)
 
 - Datasets from UCI could be found [here](https://github.com/titu1994/MLSTM-FCN/releases)
 
@@ -40,10 +42,12 @@ python trainer_DSN.py --sparse True --density 0.1 --sparse_init remain_sort --fi
 ```
 
 ## Acknowledgements
-We appreciate the following github repos a lot for their valuable code
+We appreciate the following github repos a lot for their valuable code.
+
 * https://github.com/Shiweiliuiiiiiii/In-Time-Over-Parameterization
 * https://github.com/TimDettmers/sparse_learning
 * https://github.com/Wensi-Tang/OS-CNN
+* https://github.com/timeseriesAI/tsai
  
 
 
